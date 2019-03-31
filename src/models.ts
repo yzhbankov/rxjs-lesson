@@ -15,8 +15,8 @@ export interface ICharacter {
     },
     image: string;
     episode: string[];
-    "url": string;
-    "created": string;
+    url: string;
+    created: string;
 }
 
 export interface IDetails {
@@ -33,15 +33,10 @@ export interface IResponse {
 
 
 export interface IApplication {
-    getCurrentPage(): number;
-    setCurrentPage(page: number): void;
-    setState(page: number): void;
-    getFilter(): string;
     setFilter(filter: string): void;
     getSourceForCurrentPage(): string;
-    setPagesNumber(pages: number): void;
-    getPagesNumber(): number;
     navToPrevPage(): void;
     navToNextPage(): void;
+    getCharacters(): ICharacter[];
 }
 

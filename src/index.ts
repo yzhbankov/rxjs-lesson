@@ -40,13 +40,14 @@ const navigation$: Observable<State> = fromEvent(navigationElement, 'click')
             } else  if (element.className === 'next-button') {
                 state.navToNextPage();
             }
+            return Object.assign(new State(), state)
         }),
         mergeMap(() => ajax.get(state.getSourceForCurrentPage()).pipe(map((res: AjaxResponse) => {
             const { response } = res;
             if (response.results) {
                 state.setCharacters(response.results)
             }
-            return Object.assign({}, state);
+            return Object.assign(new State(), state);
         })))
     );
 
@@ -55,7 +56,7 @@ const filter$: Observable<State> = fromEvent(inputElement, 'change')
         map((event: Event) => {
             const element: HTMLInputElement = event.target as HTMLInputElement;
             state.setFilter(element.value);
-            return Object.assign({}, state)
+            return Object.assign(new State(), state)
         })
     );
 
@@ -67,8 +68,7 @@ const application$ = merge(
 
 application$.subscribe(state => {
     if (state != prevState) {
-        const characters = state.characters.filter(item => item.name.indexOf(state.filter) !== -1);
-        createCharactersList(containerElement, characters);
+        createCharactersList(containerElement, state.getCharacters());
         prevState = state;
     }
 });

@@ -7,22 +7,6 @@ export class State implements IApplication {
     source: string = 'https://rickandmortyapi.com/api/character/';
     characters: ICharacter[] = [];
 
-    public getCurrentPage():number {
-        return this.page
-    };
-
-    public setCurrentPage(page: number):number {
-        return this.page = page;
-    };
-
-    public setState(page: number): void {
-        this.page = page;
-    }
-
-    public getFilter():string {
-        return this.filter;
-    }
-
     public setFilter(filter: string) {
         this.filter = filter;
     }
@@ -47,11 +31,14 @@ export class State implements IApplication {
         this.pages = pages;
     }
 
-    public getPagesNumber(): number {
-        return this.pages;
-    }
 
     public setCharacters(characters: ICharacter[]): void {
         this.characters = characters;
+    }
+
+    public getCharacters(): ICharacter[] {
+        return this.characters.filter((character: ICharacter) => {
+            return character.name.indexOf(this.filter) !== -1
+        })
     }
 }
