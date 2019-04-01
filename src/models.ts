@@ -33,7 +33,7 @@ export interface IResponse {
 
 
 export interface IApplication {
-    setFilter(filter: string): void;
+    setFilter(filter: string, value: string): void;
     getSourceForCurrentPage(): string;
     navToPrevPage(): void;
     navToNextPage(): void;

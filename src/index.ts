@@ -2,7 +2,7 @@ import { Observable, of, fromEvent, merge } from 'rxjs';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
 import { map, catchError, mergeMap } from 'rxjs/operators';
 import { State } from './state';
-import { createCharactersList, createPaginationControl } from './htmlHelpers';
+import { createCharactersList, createPaginationControl, createFilterControl } from './htmlHelpers';
 
 const state = new State();
 let prevState = {};
@@ -10,8 +10,13 @@ let prevState = {};
 const inputElement: HTMLInputElement = document.querySelector('.inputElement') as HTMLInputElement;
 const containerElement: HTMLDivElement = document.querySelector('.containerElement') as HTMLDivElement;
 const navigationElement: HTMLDivElement = document.querySelector('.navigationElement') as HTMLDivElement;
+const filterElement: HTMLDivElement = document.querySelector('.filterElement') as HTMLDivElement;
 
 createPaginationControl(navigationElement);
+createFilterControl(filterElement);
+
+const statusElement: HTMLSelectElement = document.querySelector('.statusElement') as HTMLSelectElement;
+const genderElement: HTMLSelectElement = document.querySelector('.genderElement') as HTMLSelectElement;
 
 const initialDataLoading$: Observable<State> = ajax.get(state.getSourceForCurrentPage())
     .pipe(
@@ -51,11 +56,31 @@ const navigation$: Observable<State> = fromEvent(navigationElement, 'click')
         })))
     );
 
-const filter$: Observable<State> = fromEvent(inputElement, 'change')
+const search$: Observable<State> = fromEvent(inputElement, 'change')
     .pipe(
         map((event: Event) => {
             const element: HTMLInputElement = event.target as HTMLInputElement;
-            state.setFilter(element.value);
+            state.setFilter('search', element.value);
+            return Object.assign(new State(), state)
+        })
+    );
+
+const statusFilter$: Observable<State> = fromEvent(statusElement, 'change')
+    .pipe(
+        map((event: Event) => {
+            const element: HTMLInputElement = event.target as HTMLInputElement;
+
+            state.setFilter('status', element.value);
+            return Object.assign(new State(), state)
+        })
+    );
+
+const statusGender$: Observable<State> = fromEvent(genderElement, 'change')
+    .pipe(
+        map((event: Event) => {
+            const element: HTMLInputElement = event.target as HTMLInputElement;
+
+            state.setFilter('gender', element.value);
             return Object.assign(new State(), state)
         })
     );
@@ -63,7 +88,9 @@ const filter$: Observable<State> = fromEvent(inputElement, 'change')
 const application$ = merge(
     initialDataLoading$,
     navigation$,
-    filter$
+    search$,
+    statusFilter$,
+    statusGender$
 );
 
 application$.subscribe(state => {

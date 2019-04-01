@@ -3,12 +3,29 @@ import { IApplication, ICharacter } from './models';
 export class State implements IApplication {
     pages: number = 0;
     page: number = 1;
-    filter: string = '';
+    filters = {
+        search: '',
+        status: '',
+        gender: ''
+    };
     source: string = 'https://rickandmortyapi.com/api/character/';
     characters: ICharacter[] = [];
 
-    public setFilter(filter: string) {
-        this.filter = filter;
+    public setFilter(filter: string, value: string): void {
+        switch(filter) {
+            case('search'): {
+                this.filters.search = value;
+                break;
+            }
+            case('status'): {
+                this.filters.status = value;
+                break;
+            }
+            case('gender'): {
+                this.filters.gender = value;
+                break;
+            }
+        }
     }
 
     public getSourceForCurrentPage(): string {
@@ -38,7 +55,10 @@ export class State implements IApplication {
 
     public getCharacters(): ICharacter[] {
         return this.characters.filter((character: ICharacter) => {
-            return character.name.indexOf(this.filter) !== -1
+            const withSelectedStatus = character.status === this.filters.status || !this.filters.status;
+            const withSelectedGender = character.gender === this.filters.gender || !this.filters.gender;
+            const withSearchedName = character.name.indexOf(this.filters.search) !== -1;
+            return withSearchedName &&  withSelectedGender && withSelectedStatus;
         })
     }
 }
