@@ -1,8 +1,11 @@
 import { Observable, of, fromEvent, merge } from 'rxjs';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
 import { map, catchError, mergeMap } from 'rxjs/operators';
+import './styles.scss';
+
 import { State } from './state';
-import { createCharactersList, createPaginationControl, createFilterControl } from './htmlHelpers';
+import { createObservables } from './observables';
+import { createCharactersList, createPaginationControl, createFilterControl, openModalHandler } from './htmlHelpers';
 
 const state = new State();
 let prevState = {};
@@ -12,6 +15,7 @@ const containerElement: HTMLDivElement = document.querySelector('.containerEleme
 const navigationElement: HTMLDivElement = document.querySelector('.navigationElement') as HTMLDivElement;
 const filterElement: HTMLDivElement = document.querySelector('.filterElement') as HTMLDivElement;
 
+openModalHandler();
 createPaginationControl(navigationElement);
 createFilterControl(filterElement);
 
@@ -96,6 +100,7 @@ const application$ = merge(
 application$.subscribe(state => {
     if (state != prevState) {
         createCharactersList(containerElement, state.getCharacters());
+        createObservables();
         prevState = state;
     }
 });

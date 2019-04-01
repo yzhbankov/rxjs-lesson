@@ -19,16 +19,14 @@ export interface ICharacter {
     created: string;
 }
 
-export interface IDetails {
-    count: number;
-    pages: number;
-    next: string;
-    prev: string;
-}
-
-export interface IResponse {
-    info: IDetails;
-    results: ICharacter[];
+export interface ICharacterLocation {
+    created: string;
+    dimension: string;
+    id: number;
+    name: string;
+    residents: string[];
+    type: string;
+    url: string;
 }
 
 
